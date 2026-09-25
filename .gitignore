@@ -1,23 +1,47 @@
-HELP.md
+### Compiled & Build Outputs ###
 target/
-.mvn/wrapper/maven-wrapper.jar
+!.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+*.class
+*.jar
+*.war
+*.ear
 
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
+### Environment & Secrets (Segurança) ###
+.env
+.env.*
+!.env.example
+application-local.properties
+application-secret.properties
+
+### Logs & Crashes ###
+*.log
+logs/
+*.log.*
+hs_err_pid*
+replay_pid*
+
+### VS Code ###
+.vscode/
+*.code-workspace
 
 ### IntelliJ IDEA ###
-.idea
+.idea/
 *.iws
 *.iml
 *.ipr
+out/
+
+### STS & Eclipse ###
+.apt_generated/
+.apt_generated_tests/
+.classpath
+.factorypath
+.project
+.settings/
+.springBeans
+.sts4-cache/
 
 ### NetBeans ###
 /nbproject/private/
@@ -29,5 +53,19 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-### VS Code ###
-.vscode/
+### OS Generated (Windows / Mac / Linux) ###
+Thumbs.db
+ehthumbs.db
+desktop.ini
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+
+### Documentation & Temp ###
+HELP.md
+*.tmp
+*.bak
+*.swp
+*~
