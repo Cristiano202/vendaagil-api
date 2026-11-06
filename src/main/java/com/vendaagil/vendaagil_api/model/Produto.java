@@ -9,7 +9,6 @@ import java.util.Objects;
 @Table(name = "tb_produtos")
 public class Produto {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Column(nullable = false , length = 100)
