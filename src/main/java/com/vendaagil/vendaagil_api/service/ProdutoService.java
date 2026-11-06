@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 public class ProdutoService {
@@ -21,6 +22,7 @@ public class ProdutoService {
     @Transactional
     public ProdutoResponseDTO criar(ProdutoRequestDTO dto) {
         Produto produto = new Produto();
+        produto.setId(gerarIdUnico());
         produto.setNome(dto.nome());
         produto.setDescricao(dto.descricao());
         produto.setPreco(dto.preco());
@@ -28,6 +30,13 @@ public class ProdutoService {
 
         Produto produtoSalvo = produtoRepository.save(produto);
         return new ProdutoResponseDTO(produtoSalvo);
+    }
+    private Long gerarIdUnico() {
+        long idGerado;
+        do {
+            idGerado = ThreadLocalRandom.current().nextLong(100_000L, 1_000_000L);
+        } while (produtoRepository.existsById(idGerado));
+        return idGerado;
     }
 
     // Cria produto
