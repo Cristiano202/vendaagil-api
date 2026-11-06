@@ -3,7 +3,6 @@ name: Java CI com Maven
 on:
   push:
     branches:
-      - feat/**
       - develop
       - main
   pull_request:
@@ -21,7 +20,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Configurar JDK 21
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'temurin'
@@ -30,5 +29,5 @@ jobs:
       - name: Dar permissão de execução ao Maven Wrapper
         run: chmod +x ./mvnw
 
-      - name: Compilar e Empacotar (sem testes de contexto de BD)
+      - name: Compilar e Empacotar (ignorando testes de BD)
         run: ./mvnw clean package -DskipTests
