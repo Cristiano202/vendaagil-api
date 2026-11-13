@@ -1,5 +1,4 @@
 package com.vendaagil.vendaagil_api.service;
-
 import com.vendaagil.vendaagil_api.dto.AuthResponseDTO;
 import com.vendaagil.vendaagil_api.dto.LoginRequestDTO;
 import com.vendaagil.vendaagil_api.dto.RegistroEmpresaRequestDTO;
@@ -8,7 +7,6 @@ import com.vendaagil.vendaagil_api.model.PerfilUsuario;
 import com.vendaagil.vendaagil_api.model.Usuario;
 import com.vendaagil.vendaagil_api.repository.EmpresaRepository;
 import com.vendaagil.vendaagil_api.repository.UsuarioRepository;
-import com.vendaagil.vendaagil_api.security.JwtService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
