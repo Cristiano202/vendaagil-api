@@ -1,4 +1,4 @@
-package com.vendaagil.vendaagil_api.security;
+package com.vendaagil.vendaagil_api.service ;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
