@@ -3,7 +3,9 @@ package com.vendaagil.vendaagil_api.service;
 import com.vendaagil.vendaagil_api.dto.ProdutoRequestDTO;
 import com.vendaagil.vendaagil_api.dto.ProdutoResponseDTO;
 import com.vendaagil.vendaagil_api.model.Produto;
+import com.vendaagil.vendaagil_api.model.Usuario;
 import com.vendaagil.vendaagil_api.repository.ProdutoRepository;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,18 +21,26 @@ public class ProdutoService {
         this.produtoRepository = produtoRepository;
     }
 
+    private Usuario getUsuarioLogado() {
+        return (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    }
+
     @Transactional
     public ProdutoResponseDTO criar(ProdutoRequestDTO dto) {
+        Usuario usuarioLogado = getUsuarioLogado();
+
         Produto produto = new Produto();
         produto.setId(gerarIdUnico());
         produto.setNome(dto.nome());
         produto.setDescricao(dto.descricao());
         produto.setPreco(dto.preco());
         produto.setQuantidadeEstoque(dto.quantidadeEstoque());
+        produto.setEmpresa(usuarioLogado.getEmpresa());
 
         Produto produtoSalvo = produtoRepository.save(produto);
         return new ProdutoResponseDTO(produtoSalvo);
     }
+
     private Long gerarIdUnico() {
         long idGerado;
         do {
@@ -39,26 +49,30 @@ public class ProdutoService {
         return idGerado;
     }
 
-    // Cria produto
     @Transactional(readOnly = true)
     public List<ProdutoResponseDTO> listarTodos() {
-        return produtoRepository.findAll()
+        Long empresaId = getUsuarioLogado().getEmpresa().getId();
+
+        return produtoRepository.findAllByEmpresaId(empresaId)
                 .stream()
                 .map(ProdutoResponseDTO::new)
                 .toList();
     }
-    // Busca ID
+
     @Transactional(readOnly = true)
     public ProdutoResponseDTO buscarPorId(Long id) {
-        Produto produto = produtoRepository.findById(id)
+        Long empresaId = getUsuarioLogado().getEmpresa().getId();
+
+        Produto produto = produtoRepository.findByIdAndEmpresaId(id, empresaId)
                 .orElseThrow(() -> new RuntimeException("Produto não encontrado com o ID: " + id));
         return new ProdutoResponseDTO(produto);
     }
 
-    // Atualizar produto
     @Transactional
     public ProdutoResponseDTO atualizar(Long id, ProdutoRequestDTO dto) {
-        Produto produto = produtoRepository.findById(id)
+        Long empresaId = getUsuarioLogado().getEmpresa().getId();
+
+        Produto produto = produtoRepository.findByIdAndEmpresaId(id, empresaId)
                 .orElseThrow(() -> new RuntimeException("Produto não encontrado com o ID: " + id));
 
         produto.setNome(dto.nome());
@@ -70,13 +84,13 @@ public class ProdutoService {
         return new ProdutoResponseDTO(produtoAtualizado);
     }
 
-    //Excluir produto por ID
     @Transactional
     public void excluir(Long id) {
-        if (!produtoRepository.existsById(id)) {
-            throw new RuntimeException("Produto não encontrado com o ID: " + id);
-        }
-        produtoRepository.deleteById(id);
-    }
+        Long empresaId = getUsuarioLogado().getEmpresa().getId();
 
+        Produto produto = produtoRepository.findByIdAndEmpresaId(id, empresaId)
+                .orElseThrow(() -> new RuntimeException("Produto não encontrado com o ID: " + id));
+
+        produtoRepository.delete(produto);
+    }
 }
