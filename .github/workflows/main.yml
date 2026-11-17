@@ -5,6 +5,7 @@ on:
     branches:
       - develop
       - main
+      - 'test/**'
   pull_request:
     branches:
       - develop
@@ -26,8 +27,8 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: Dar permissão de execução ao Maven Wrapper
-        run: chmod +x ./mvnw
+      - name: Executar Todos os Testes
+        run: mvn test -DfailIfNoTests=false
 
-      - name: Compilar e Empacotar (ignorando testes de BD)
-        run: ./mvnw clean package -DskipTests
+      - name: Compilar e Empacotar (.jar)
+        run: mvn package -DskipTests
