@@ -5,6 +5,7 @@ on:
     branches:
       - develop
       - main
+      - 'test/**'
   pull_request:
     branches:
       - develop
@@ -29,5 +30,8 @@ jobs:
       - name: Dar permissão de execução ao Maven Wrapper
         run: chmod +x ./mvnw
 
-      - name: Compilar e Empacotar (ignorando testes)
-        run: ./mvnw clean package -DskipTests
+      - name: Executar Todos os Testes
+        run: ./mvnw test -DfailIfNoTests=false
+
+      - name: Compilar e Empacotar (.jar)
+        run: ./mvnw package -DskipTests
