@@ -27,11 +27,8 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: Dar permissão de execução ao Maven Wrapper
-        run: chmod +x ./mvnw
-
       - name: Executar Todos os Testes
-        run: ./mvnw test -DfailIfNoTests=false
+        run: mvn test -DfailIfNoTests=false
 
       - name: Compilar e Empacotar (.jar)
-        run: ./mvnw package -DskipTests
+        run: mvn package -DskipTests
