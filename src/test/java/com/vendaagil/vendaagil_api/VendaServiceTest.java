@@ -49,7 +49,7 @@ class VendaServiceTest {
     void setUp() {
         empresa = new Empresa();
         empresa.setId(1L);
-        empresa.setNome("Supermercado Bom Preço");
+        empresa.setRazaoSocial("Supermercado Bom Preço");
 
         operador = new Usuario();
         operador.setId(1L);
