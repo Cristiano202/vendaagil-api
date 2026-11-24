@@ -11,13 +11,44 @@ on:
       - develop
       - main
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     name: Compilar e Testar API
     runs-on: ubuntu-latest
 
+    # Banco descartavel, existe so durante o job
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: vendaagil_db
+          POSTGRES_USER: ci_user
+          POSTGRES_PASSWORD: ci_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U ci_user -d vendaagil_db"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    # Valores usados APENAS no CI. Nunca reutilize em producao.
+    env:
+      POSTGRES_DB: vendaagil_db
+      POSTGRES_USER: ci_user
+      POSTGRES_PASSWORD: ci_password
+      JWT_SECRET: Y2ktb25seS1kdW1teS1qd3Qtc2VjcmV0LTMyLWJ5dGVz
+      JWT_EXPIRATION_MS: 3600000
+
     steps:
-      - name: Checkout do Código
+      - name: Checkout do Codigo
         uses: actions/checkout@v4
 
       - name: Configurar JDK 21
@@ -27,8 +58,5 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: Executar Todos os Testes
-        run: mvn test -DfailIfNoTests=false
-
-      - name: Compilar e Empacotar (.jar)
-        run: mvn package -DskipTests
+      - name: Testar, compilar e empacotar (.jar)
+        run: mvn -B verify
