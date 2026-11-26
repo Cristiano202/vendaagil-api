@@ -1,4 +1,4 @@
-# 🚀 VendaÁgil API
+#  VendaÁgil API
 
 API RESTful desenvolvida para gestão comercial, controle de estoque e registro de vendas multi-empresa (multi-tenant). Projeto focado em boas práticas de arquitetura back-end, segurança, testes unitários e integração contínua.
 
