@@ -1,6 +1,7 @@
-package com.vendaagil.vendaagil_api.service ;
+package com.vendaagil.vendaagil_api.service;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,20 +15,26 @@ import java.util.function.Function;
 @Service
 public class JwtService {
 
-    @Value("${api.security.token.secret:sua-chave-secreta-padrao-muito-segura-com-mais-de-32-chars}")
+    // Sem valor padrao de proposito: se o JWT_SECRET nao existir, a aplicacao nao sobe
+    @Value("${jwt.secret}")
     private String secretKey;
 
-    private static final long TEMPO_EXPIRACAO = 1000 * 60 * 60 * 24;
+    @Value("${jwt.expiration-ms}")
+    private long tempoExpiracao;
 
     public String gerarToken(String email, Long empresaId, String role) {
-        return Jwts.builder()
+        JwtBuilder builder = Jwts.builder()
                 .subject(email)
-                .claim("empresaId", empresaId)
                 .claim("role", role)
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + TEMPO_EXPIRACAO))
-                .signWith(obterChaveAssinatura())
-                .compact();
+                .expiration(new Date(System.currentTimeMillis() + tempoExpiracao));
+
+        // Usuario novo do Google ainda nao tem empresa: so grava o claim se existir
+        if (empresaId != null) {
+            builder.claim("empresaId", empresaId);
+        }
+
+        return builder.signWith(obterChaveAssinatura()).compact();
     }
 
     public String extrairEmail(String token) {
