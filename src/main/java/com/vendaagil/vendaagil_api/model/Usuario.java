@@ -17,7 +17,8 @@ public class Usuario {
     @Column(nullable = false, unique = true, length = 120)
     private String email;
 
-    @Column(nullable = false)
+    // Pode ser nula: quem entra com Google nao tem senha cadastrada
+    @Column
     private String senha;
 
     @Enumerated(EnumType.STRING)
@@ -27,9 +28,14 @@ public class Usuario {
     @Column(nullable = false)
     private Boolean ativo = true;
 
-    // Cada utilizador pertence estritamente a uma empresa (Tenant)
+    // Origem do cadastro: LOCAL (e-mail e senha) ou GOOGLE
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private AuthProvider provider = AuthProvider.LOCAL;
+
+    // Pode ser nula: usuario novo do Google nasce sem empresa (onboarding depois)
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "empresa_id", nullable = false)
+    @JoinColumn(name = "empresa_id")
     private Empresa empresa;
 
     @Column(nullable = false, updatable = false)
@@ -62,6 +68,9 @@ public class Usuario {
 
     public Boolean getAtivo() { return ativo; }
     public void setAtivo(Boolean ativo) { this.ativo = ativo; }
+
+    public AuthProvider getProvider() { return provider; }
+    public void setProvider(AuthProvider provider) { this.provider = provider; }
 
     public Empresa getEmpresa() { return empresa; }
     public void setEmpresa(Empresa empresa) { this.empresa = empresa; }
